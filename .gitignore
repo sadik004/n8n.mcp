@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments & Local Secrets
+.env
+.env.local
+.venv/
+env/
+venv/
+ENV/
+
+# n8n MCP Local Snapshots & Working State
+.snapshots/
+*.snapshot.json
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build & Distribution
+build/
+dist/
+*.egg-info/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
