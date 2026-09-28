@@ -48,7 +48,7 @@ async def run_diagnostics_check(config: N8nConfig) -> None:
     console.print(
         Panel.fit(
             f"[bold cyan]n8n MCP Server Diagnostics[/bold cyan]\n"
-            f"[dim]Base URL:[/dim] {config.n8n_base_url}\n"
+            f"[dim]Base URL:[/dim] {config.n8n_host}\n"
             f"[dim]Snapshots Directory:[/dim] {config.snapshots_dir}\n"
             f"[dim]Stealth Scraper URL:[/dim] {config.behavioral_playwright_url}",
             title="Configuration",

@@ -58,6 +58,10 @@ class N8nClient:
         """Close underlying HTTP client connections."""
         await self.client.aclose()
 
+    async def close(self) -> None:
+        """Alias for aclose()."""
+        await self.aclose()
+
     async def __aenter__(self) -> N8nClient:
         return self
 
