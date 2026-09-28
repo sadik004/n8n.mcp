@@ -128,6 +128,15 @@ Traditional n8n MCP servers force the LLM to read and rewrite the entire workflo
 
 ## 🚀 Quick Start
 
+### ⚡ Zero-Docker Native Setup (Fastest & 100% Free Forever)
+
+You do **not** need Docker Desktop or expensive cloud trials. Run n8n natively with Node.js in seconds with zero container overhead:
+
+```bash
+# 1. Launch native n8n in seconds (~100MB RAM, unlimited free)
+npx -y n8n
+```
+
 ### 1. Installation
 ```bash
 git clone https://github.com/sadik004/n8n.mcp.git
@@ -135,8 +144,18 @@ cd n8n.mcp
 pip install -e .
 ```
 
-### 2. Environment Configuration
-Copy `.env.example` to `.env`:
+### 2. Automated Setup Wizard
+Run the included self-healing setup wizard to automatically provision your API Key directly into `.env`:
+```bash
+# Auto-provisions and creates API key via browser
+python scripts/setup_n8n.py
+
+# Or provide your existing API key directly
+python scripts/setup_n8n.py --key "YOUR_N8N_PUBLIC_API_KEY"
+```
+
+### 3. Manual Environment Configuration
+Or copy `.env.example` to `.env` manually:
 ```env
 N8N_HOST=http://localhost:5678
 N8N_API_KEY=your_n8n_public_api_key_here
@@ -146,7 +165,7 @@ BEHAVIORAL_PLAYWRIGHT_URL=http://host.docker.internal:8000
 SNAPSHOTS_DIR=.snapshots
 ```
 
-### 3. Verify Server
+### 4. Verify Server & Health
 ```bash
 python -m n8n_mcp --check
 ```

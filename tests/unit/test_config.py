@@ -9,7 +9,7 @@ from n8n_mcp.config import N8nConfig
 
 def test_default_config():
     """Verify production-grade defaults."""
-    config = N8nConfig()
+    config = N8nConfig(_env_file=None)
     assert config.n8n_host == "http://localhost:5678"
     assert config.n8n_api_key == ""
     assert config.timeout_seconds == 30.0
