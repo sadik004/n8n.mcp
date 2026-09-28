@@ -8,6 +8,9 @@
 
 A production-grade, standalone **Model Context Protocol (MCP)** Server for [n8n](https://n8n.io) workflow automation. Built with clean architecture, strict Pydantic v2 domain schemas, Windows Proactor compatibility, and anti-hallucination engines for Claude Desktop, Cursor, Antigravity, and autonomous agent swarms.
 
+> 📖 **Looking for Prompting & Operational Recipes?**  
+> Check out the comprehensive [PROMPTING_GUIDE.md](PROMPTING_GUIDE.md) (Bangla & English user manual) and [PLAYBOOK.md](PLAYBOOK.md) for 10+ copy-paste prompts and self-healing recipes!
+
 ---
 
 ## ⚡ Why n8n MCP Server?
