@@ -77,9 +77,15 @@ class N8nClient:
         if isinstance(payload, WorkflowDTO):
             return WorkflowSanitizedPayload.from_workflow(payload).to_api_dict()
 
+        sanitized_nodes = []
+        for node in payload.get("nodes", []):
+            node_dict = node if isinstance(node, dict) else (node.model_dump(by_alias=True, exclude_unset=True) if hasattr(node, "model_dump") else dict(node))
+            clean_node = {k: v for k, v in node_dict.items() if v is not None}
+            sanitized_nodes.append(clean_node)
+
         sanitized: Dict[str, Any] = {
             "name": payload.get("name", "Untitled Workflow"),
-            "nodes": payload.get("nodes", []),
+            "nodes": sanitized_nodes,
             "connections": payload.get("connections", {}),
             "settings": payload.get("settings", {}),
         }

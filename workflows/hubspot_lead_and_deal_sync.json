@@ -1,0 +1,222 @@
+{
+  "id": "T5jv9r16BEY1BUJQ",
+  "name": "HubSpot Inbound Lead & Deal Sync",
+  "active": false,
+  "nodes": [
+    {
+      "id": "66eaef27-4f1b-4221-9b53-c473bd513084",
+      "name": "HubSpot Webhook Ingest",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240.0,
+        300.0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hubspot-lead-ingest",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "credentials": null,
+      "disabled": false,
+      "notesInFlow": null
+    },
+    {
+      "id": "3bb86395-a195-4106-b138-305b50459db4",
+      "name": "Normalize Lead & Deal Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480.0,
+        300.0
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.body || $json;\n\nconst firstName = String(raw.firstname || raw.first_name || '').trim();\nconst lastName = String(raw.lastname || raw.last_name || '').trim();\nconst email = String(raw.email || '').toLowerCase().trim();\nconst company = String(raw.company || raw.company_name || 'Acme Corp').trim();\nconst rawAmount = raw.deal_amount || raw.amount || 0;\nconst dealAmount = parseFloat(rawAmount) || 0.0;\n\nreturn {\n  json: {\n    firstname: firstName,\n    lastname: lastName,\n    full_name: `${firstName} ${lastName}`.trim(),\n    email: email,\n    company: company,\n    deal_amount: dealAmount,\n    ingested_at: new Date().toISOString()\n  }\n};"
+      },
+      "credentials": null,
+      "disabled": false,
+      "notesInFlow": null
+    },
+    {
+      "id": "f7e41b5c-2fea-4fc7-80c4-eb5d75bf4f51",
+      "name": "HubSpot Contact Sync",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [
+        720.0,
+        300.0
+      ],
+      "parameters": {
+        "resource": "contact",
+        "operation": "createOrUpdate",
+        "email": "={{ $json.email }}",
+        "additionalFields": {
+          "firstName": "={{ $json.firstname }}",
+          "lastName": "={{ $json.lastname }}",
+          "company": "={{ $json.company }}"
+        }
+      },
+      "credentials": null,
+      "disabled": false,
+      "notesInFlow": null
+    },
+    {
+      "id": "44eb67aa-70f2-4062-9844-dd6c0295aec9",
+      "name": "Check Deal Amount (>= 1000)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        960.0,
+        300.0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-deal-amount",
+              "leftValue": "={{ $json.deal_amount }}",
+              "rightValue": 1000,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "credentials": null,
+      "disabled": false,
+      "notesInFlow": null
+    },
+    {
+      "id": "a50f68d8-cfed-491c-8cb8-ace6184b5145",
+      "name": "Create High-Priority Deal",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [
+        1220.0,
+        180.0
+      ],
+      "parameters": {
+        "resource": "deal",
+        "operation": "create",
+        "dealName": "={{ 'High-Priority Deal: ' + $json.company + ' ($' + $json.deal_amount + ')' }}",
+        "stage": "appointmentscheduled",
+        "amount": "={{ $json.deal_amount }}",
+        "additionalFields": {
+          "priority": "HIGH",
+          "dealType": "newbusiness"
+        }
+      },
+      "credentials": null,
+      "disabled": false,
+      "notesInFlow": null
+    },
+    {
+      "id": "aa186ebd-474e-40af-920c-b080843d76c0",
+      "name": "Create Standard Deal",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [
+        1220.0,
+        420.0
+      ],
+      "parameters": {
+        "resource": "deal",
+        "operation": "create",
+        "dealName": "={{ 'Standard Deal: ' + $json.company + ' ($' + $json.deal_amount + ')' }}",
+        "stage": "qualifiedtobuy",
+        "amount": "={{ $json.deal_amount }}",
+        "additionalFields": {
+          "priority": "LOW",
+          "dealType": "existingbusiness"
+        }
+      },
+      "credentials": null,
+      "disabled": false,
+      "notesInFlow": null
+    }
+  ],
+  "connections": {
+    "HubSpot Webhook Ingest": {
+      "main": [
+        [
+          {
+            "node": "Normalize Lead & Deal Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Lead & Deal Fields": {
+      "main": [
+        [
+          {
+            "node": "HubSpot Contact Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HubSpot Contact Sync": {
+      "main": [
+        [
+          {
+            "node": "Check Deal Amount (>= 1000)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Deal Amount (>= 1000)": {
+      "main": [
+        [
+          {
+            "node": "Create High-Priority Deal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Standard Deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {
+    "HubSpot Webhook Ingest": [
+      {
+        "json": {
+          "email": "alex.turner@acmecorp.io",
+          "firstname": "Alex",
+          "lastname": "Turner",
+          "company": "Acme Corp",
+          "deal_amount": 2500
+        }
+      }
+    ]
+  },
+  "versionId": "df47dd6c-626e-4479-9ba9-710533fe4668",
+  "createdAt": "2026-09-28T16:43:39.395Z",
+  "updatedAt": "2026-09-28T16:43:39.424Z",
+  "triggerCount": 0,
+  "tags": []
+}

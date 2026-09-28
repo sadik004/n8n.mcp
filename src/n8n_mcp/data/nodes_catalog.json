@@ -348,5 +348,41 @@
         "options": ["toolsAgent", "conversationalAgent", "openAiFunctionsAgent"]
       }
     ]
+  },
+  {
+    "name": "n8n-nodes-base.hubspot",
+    "displayName": "HubSpot",
+    "description": "Consume HubSpot API for Contacts, Deals, Companies, and Engagements.",
+    "category": "Sales & CRM",
+    "operations": ["create", "createOrUpdate", "get", "getAll", "update", "delete"],
+    "credentialsRequired": ["hubspotAppApi", "hubspotApi", "hubspotDeveloperApi"],
+    "properties": [
+      {
+        "name": "resource",
+        "displayName": "Resource",
+        "type": "options",
+        "default": "contact",
+        "options": ["contact", "deal", "company", "ticket"]
+      },
+      {
+        "name": "operation",
+        "displayName": "Operation",
+        "type": "options",
+        "default": "createOrUpdate",
+        "options": ["create", "createOrUpdate", "get", "getAll", "update", "delete"]
+      },
+      {
+        "name": "email",
+        "displayName": "Email",
+        "type": "string",
+        "default": ""
+      },
+      {
+        "name": "additionalFields",
+        "displayName": "Additional Fields",
+        "type": "collection",
+        "default": {}
+      }
+    ]
   }
 ]

@@ -39,6 +39,7 @@ class NodeCatalogEngine:
         "agent": "@n8n/n8n-nodes-langchain.agent",
         "ai_agent": "@n8n/n8n-nodes-langchain.agent",
         "langchain": "@n8n/n8n-nodes-langchain.agent",
+        "hubspot": "n8n-nodes-base.hubspot",
     }
 
     def __init__(self, catalog_path: Optional[Path] = None):

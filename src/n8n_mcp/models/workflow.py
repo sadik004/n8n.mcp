@@ -54,6 +54,11 @@ class WorkflowSanitizedPayload(N8nBaseModel):
         data = self.model_dump(by_alias=True, exclude_unset=True)
         if self.pin_data is None and "pinData" in data:
             del data["pinData"]
+        clean_nodes = []
+        for node in data.get("nodes", []):
+            clean_node = {k: v for k, v in node.items() if v is not None}
+            clean_nodes.append(clean_node)
+        data["nodes"] = clean_nodes
         return data
 
 

@@ -28,7 +28,7 @@ class NodeDTO(N8nBaseModel):
     parameters: Dict[str, Any] = Field(default_factory=dict)
     credentials: Optional[Dict[str, Any]] = None
     disabled: bool = False
-    notes_in_flow: Optional[str] = Field(default=None, alias="notesInFlow")
+    notes_in_flow: Optional[bool] = Field(default=None, alias="notesInFlow")
 
 
 class NodePatchRequest(N8nBaseModel):
