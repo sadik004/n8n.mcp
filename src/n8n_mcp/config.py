@@ -4,7 +4,7 @@ Implements typed, validated settings using Pydantic Settings v2.
 """
 
 from __future__ import annotations
-from typing import Dict
+from typing import Any, Dict
 from pydantic import Field, AliasChoices, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -21,7 +21,7 @@ class N8nConfig(BaseSettings):
 
     n8n_host: str = Field(
         default="http://localhost:5678",
-        validation_alias=AliasChoices("n8n_host", "N8N_HOST"),
+        validation_alias=AliasChoices("n8n_host", "N8N_HOST", "n8n_base_url", "N8N_BASE_URL"),
         description="Base URL for target n8n instance",
     )
     n8n_api_key: str = Field(
@@ -49,6 +49,12 @@ class N8nConfig(BaseSettings):
         validation_alias=AliasChoices("n8n_snapshots_dir", "snapshots_dir", "SNAPSHOTS_DIR"),
         description="Local directory for rollback workflow snapshots",
     )
+
+    @field_validator("snapshots_dir", mode="before")
+    @classmethod
+    def normalize_snapshots_dir(cls, value: Any) -> str:
+        """Coerce Path to string."""
+        return str(value) if value is not None else ".snapshots"
 
     @field_validator("n8n_host", "behavioral_playwright_url", mode="after")
     @classmethod
