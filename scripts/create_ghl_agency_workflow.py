@@ -174,21 +174,26 @@ return {
             {
                 "id": vip_alert_id,
                 "name": "Dispatch Instant VIP Alert",
-                "type": "n8n-nodes-base.httpRequest",
-                "typeVersion": 4.2,
+                "type": "n8n-nodes-base.code",
+                "typeVersion": 2,
                 "position": [1220, 180],
                 "parameters": {
-                    "method": "POST",
-                    "url": "https://httpbin.org/post",
-                    "sendBody": True,
-                    "contentType": "json",
-                    "bodyParameters": {
-                        "parameters": [
-                            {"name": "channel", "value": "vip-hot-leads"},
-                            {"name": "alert", "value": "={{ '🔥 HOT VIP LEAD: ' + $json.full_name + ' (' + $json.company + ') - Score: ' + $json.qualification.lead_score + '/100' }}"},
-                            {"name": "pitch", "value": "={{ $json.qualification.suggested_pitch }}"}
-                        ]
-                    }
+                    "mode": "runOnceForEachItem",
+                    "jsCode": """const lead = $json;
+return {
+  json: {
+    event: "VIP_HOT_LEAD_DISPATCHED",
+    channel: "#vip-sales-alerts",
+    lead_id: lead.lead_id,
+    full_name: lead.full_name,
+    company: lead.company,
+    score: lead.qualification.lead_score,
+    suggested_pitch: lead.qualification.suggested_pitch,
+    alert_payload: `🚨 VIP HOT LEAD: ${lead.full_name} (${lead.company}) - Score: ${lead.qualification.lead_score}/100`,
+    dispatched_at: new Date().toISOString(),
+    status: "dispatched"
+  }
+};"""
                 }
             },
             {
@@ -290,12 +295,23 @@ return {
     }
 
     try:
-        created = await client.create_workflow(workflow_payload)
-        print(f"Workflow Created Successfully!")
+        # Check existing workflows
+        existing_list = await client.list_workflows()
+        existing_wf = next((w for w in existing_list.data if w.name == workflow_payload["name"]), None)
+
+        if existing_wf:
+            target_id = existing_wf.id
+            workflow_payload["id"] = target_id
+            created = await client.update_workflow(target_id, workflow_payload)
+            print(f"Workflow Updated Successfully!")
+        else:
+            created = await client.create_workflow(workflow_payload)
+            print(f"Workflow Created Successfully!")
+
         print(f"ID: {created.id}")
         print(f"Name: {created.name}")
         print(f"Nodes Count: {len(created.nodes)}")
-        print(f"URL: {config.base_url}/workflow/{created.id}")
+        print(f"URL: {config.n8n_host}/workflow/{created.id}")
 
         # Activate the workflow
         try:

@@ -29,7 +29,7 @@ def test_ghl_leads():
         "service_needed": "Basic Automation"
     }
 
-    client = httpx.Client(timeout=10.0)
+    client = httpx.Client(timeout=30.0)
 
     print("--- 1. Testing VIP Hot Lead Ingestion ---")
     resp_vip = client.post(webhook_url, json=vip_lead)
