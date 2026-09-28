@@ -1,0 +1,352 @@
+[
+  {
+    "name": "n8n-nodes-base.httpRequest",
+    "displayName": "HTTP Request",
+    "description": "Makes an HTTP request to any API and returns the response data.",
+    "category": "Development",
+    "operations": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"],
+    "credentialsRequired": ["httpHeaderAuth", "httpBasicAuth", "oAuth2Api", "genericCredentialType"],
+    "properties": [
+      {
+        "name": "method",
+        "displayName": "Method",
+        "type": "options",
+        "default": "GET",
+        "options": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+      },
+      {
+        "name": "url",
+        "displayName": "URL",
+        "type": "string",
+        "required": true,
+        "default": "https://api.example.com"
+      },
+      {
+        "name": "authentication",
+        "displayName": "Authentication",
+        "type": "options",
+        "default": "none",
+        "options": ["none", "predefinedCredentialType", "genericCredentialType"]
+      },
+      {
+        "name": "sendHeaders",
+        "displayName": "Send Headers",
+        "type": "boolean",
+        "default": false
+      },
+      {
+        "name": "sendBody",
+        "displayName": "Send Body",
+        "type": "boolean",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.code",
+    "displayName": "Code",
+    "description": "Executes custom JavaScript or Python code on items passing through.",
+    "category": "Development",
+    "operations": ["runOnceForAllItems", "runOnceForEachItem"],
+    "credentialsRequired": [],
+    "properties": [
+      {
+        "name": "language",
+        "displayName": "Language",
+        "type": "options",
+        "default": "javaScript",
+        "options": ["javaScript", "python"]
+      },
+      {
+        "name": "mode",
+        "displayName": "Mode",
+        "type": "options",
+        "default": "runOnceForAllItems",
+        "options": ["runOnceForAllItems", "runOnceForEachItem"]
+      },
+      {
+        "name": "jsCode",
+        "displayName": "JavaScript Code",
+        "type": "string",
+        "default": "return $input.all();"
+      },
+      {
+        "name": "pythonCode",
+        "displayName": "Python Code",
+        "type": "string",
+        "default": "return _input.all()"
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.webhook",
+    "displayName": "Webhook",
+    "description": "Starts workflow execution upon receiving incoming HTTP request.",
+    "category": "Trigger",
+    "operations": ["GET", "POST", "PUT", "DELETE"],
+    "credentialsRequired": ["httpHeaderAuth", "httpBasicAuth"],
+    "properties": [
+      {
+        "name": "path",
+        "displayName": "Path",
+        "type": "string",
+        "required": true,
+        "default": "custom-endpoint"
+      },
+      {
+        "name": "httpMethod",
+        "displayName": "HTTP Method",
+        "type": "options",
+        "default": "POST",
+        "options": ["GET", "POST", "PUT", "DELETE", "PATCH"]
+      },
+      {
+        "name": "responseMode",
+        "displayName": "Response Mode",
+        "type": "options",
+        "default": "onReceived",
+        "options": ["onReceived", "lastNode", "responseNode"]
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.scheduleTrigger",
+    "displayName": "Schedule Trigger",
+    "description": "Triggers workflow at scheduled intervals using cron or time intervals.",
+    "category": "Trigger",
+    "operations": ["interval", "cron"],
+    "credentialsRequired": [],
+    "properties": [
+      {
+        "name": "rule",
+        "displayName": "Rule",
+        "type": "options",
+        "default": "interval",
+        "options": ["interval", "cron"]
+      },
+      {
+        "name": "interval",
+        "displayName": "Interval",
+        "type": "number",
+        "default": 1
+      },
+      {
+        "name": "unit",
+        "displayName": "Unit",
+        "type": "options",
+        "default": "hours",
+        "options": ["seconds", "minutes", "hours", "days", "weeks"]
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.if",
+    "displayName": "If",
+    "description": "Routes items conditionally depending on whether expression evaluates to true or false.",
+    "category": "Flow",
+    "operations": ["conditionalRouting"],
+    "credentialsRequired": [],
+    "properties": [
+      {
+        "name": "conditions",
+        "displayName": "Conditions",
+        "type": "filter",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.switch",
+    "displayName": "Switch",
+    "description": "Routes data to one of multiple output paths depending on configured rules.",
+    "category": "Flow",
+    "operations": ["rulesRouting"],
+    "credentialsRequired": [],
+    "properties": [
+      {
+        "name": "mode",
+        "displayName": "Mode",
+        "type": "options",
+        "default": "rules",
+        "options": ["rules", "expression"]
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.postgres",
+    "displayName": "PostgreSQL",
+    "description": "Executes SQL queries, selects, inserts, updates, or deletes against PostgreSQL database.",
+    "category": "Database",
+    "operations": ["executeQuery", "insert", "update", "delete", "select"],
+    "credentialsRequired": ["postgres"],
+    "properties": [
+      {
+        "name": "operation",
+        "displayName": "Operation",
+        "type": "options",
+        "default": "executeQuery",
+        "options": ["executeQuery", "insert", "update", "delete", "select"]
+      },
+      {
+        "name": "query",
+        "displayName": "Query",
+        "type": "string",
+        "default": "SELECT * FROM users LIMIT 10;"
+      },
+      {
+        "name": "schema",
+        "displayName": "Schema",
+        "type": "string",
+        "default": "public"
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.slack",
+    "displayName": "Slack",
+    "description": "Sends messages, files, reactions, or queries users and channels in Slack workspace.",
+    "category": "Communication",
+    "operations": ["postMessage", "updateMessage", "uploadFile", "addReaction"],
+    "credentialsRequired": ["slackApi", "slackOAuth2Api"],
+    "properties": [
+      {
+        "name": "resource",
+        "displayName": "Resource",
+        "type": "options",
+        "default": "message",
+        "options": ["message", "channel", "user", "file"]
+      },
+      {
+        "name": "operation",
+        "displayName": "Operation",
+        "type": "options",
+        "default": "post",
+        "options": ["post", "update", "get", "getAll"]
+      },
+      {
+        "name": "channel",
+        "displayName": "Channel",
+        "type": "string",
+        "required": true,
+        "default": "#general"
+      },
+      {
+        "name": "text",
+        "displayName": "Text",
+        "type": "string",
+        "default": "Hello from n8n!"
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.telegram",
+    "displayName": "Telegram",
+    "description": "Sends text, media, documents, and interactive buttons via Telegram Bot API.",
+    "category": "Communication",
+    "operations": ["sendMessage", "sendPhoto", "sendDocument"],
+    "credentialsRequired": ["telegramApi"],
+    "properties": [
+      {
+        "name": "resource",
+        "displayName": "Resource",
+        "type": "options",
+        "default": "message",
+        "options": ["message", "chat"]
+      },
+      {
+        "name": "chatId",
+        "displayName": "Chat ID",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "text",
+        "displayName": "Text",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "n8n-nodes-base.googleSheets",
+    "displayName": "Google Sheets",
+    "description": "Reads, creates, updates, appends, and deletes rows in Google Sheets.",
+    "category": "Document",
+    "operations": ["append", "read", "update", "delete"],
+    "credentialsRequired": ["googleSheetsOAuth2Api"],
+    "properties": [
+      {
+        "name": "operation",
+        "displayName": "Operation",
+        "type": "options",
+        "default": "append",
+        "options": ["append", "read", "update", "clear"]
+      },
+      {
+        "name": "documentId",
+        "displayName": "Document ID",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sheetName",
+        "displayName": "Sheet Name",
+        "type": "string",
+        "default": "Sheet1"
+      }
+    ]
+  },
+  {
+    "name": "@n8n/n8n-nodes-langchain.openAi",
+    "displayName": "OpenAI Chat Model",
+    "description": "Supplies GPT-4o / GPT-3.5 language model intelligence to n8n LangChain AI Agent nodes.",
+    "category": "AI / Language Model",
+    "operations": ["chatModel"],
+    "credentialsRequired": ["openAiApi"],
+    "properties": [
+      {
+        "name": "model",
+        "displayName": "Model",
+        "type": "options",
+        "default": "gpt-4o",
+        "options": ["gpt-4o", "gpt-4o-mini", "o1-preview", "gpt-3.5-turbo"]
+      },
+      {
+        "name": "temperature",
+        "displayName": "Temperature",
+        "type": "number",
+        "default": 0.7
+      }
+    ]
+  },
+  {
+    "name": "@n8n/n8n-nodes-langchain.agent",
+    "displayName": "AI Agent",
+    "description": "Autonomous AI Agent cluster orchestrating language models, tools, and memory in n8n.",
+    "category": "AI / Agent",
+    "operations": ["runAgent"],
+    "credentialsRequired": [],
+    "properties": [
+      {
+        "name": "promptType",
+        "displayName": "Prompt Type",
+        "type": "options",
+        "default": "auto",
+        "options": ["auto", "define"]
+      },
+      {
+        "name": "text",
+        "displayName": "Text",
+        "type": "string",
+        "default": "={{ $json.chatInput }}"
+      },
+      {
+        "name": "agent",
+        "displayName": "Agent Type",
+        "type": "options",
+        "default": "toolsAgent",
+        "options": ["toolsAgent", "conversationalAgent", "openAiFunctionsAgent"]
+      }
+    ]
+  }
+]
